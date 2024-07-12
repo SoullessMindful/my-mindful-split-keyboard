@@ -31,6 +31,9 @@ byte layer = 0;
 unsigned long shiftLastTime;
 bool shiftLock = false;
 
+unsigned long firstLayerLastTime;
+bool firstLayerLock = false;
+
 void setup() {
   for (byte i = 0; i < OUTPUT_COUNT; i++) {
     pinMode(OUTPUTS[i], OUTPUT);
@@ -80,19 +83,12 @@ void handlePressOrRelease(byte section, byte row, bool press) {
     case SPECIAL_SECTION_LEFT:
       switch (row) {
         case 0:
-          if (press) {
-            Keyboard.press(KEY_RIGHT_SHIFT);
-
-            unsigned long shiftTime = millis();
-            if (shiftTime - shiftLastTime < LOCK_TIME_BOUND) {
-              shiftLock = !shiftLock;
-            }
-            shiftLastTime = shiftTime;
-          } else if (!shiftLock) {
-            Keyboard.release(KEY_RIGHT_SHIFT);
-          }
+          porl(KEY_LEFT_SHIFT, press, &shiftLock, &shiftLastTime);
           break;
 
+        case 1:
+          handleLock(&firstLayerLock, &firstLayerLastTime);
+          break;
       }
       break;
 
@@ -106,7 +102,7 @@ void handlePressOrRelease(byte section, byte row, bool press) {
 }
 
 void handleLayers() {
-  if (keyDown[SPECIAL_SECTION_LEFT][1]) {
+  if (firstLayerLock || keyDown[SPECIAL_SECTION_LEFT][1]) {
     layer = 1;
     return;
   }
@@ -121,4 +117,23 @@ void por(char key, bool press) {
   } else {
     Keyboard.release(key);
   }
+}
+
+// Press or Release with lock
+void porl(char key, bool press, bool *lock, unsigned long *lastTime) {
+  if (press) {
+    Keyboard.press(key);
+
+    handleLock(lock, lastTime);
+  } else if (!*lock) {
+    Keyboard.release(key);
+  }
+}
+
+void handleLock(bool *lock, unsigned long *lastTime) {
+    unsigned long time = millis();
+    if (time - *lastTime < LOCK_TIME_BOUND) {
+      *lock = !*lock;
+    }
+    *lastTime = time;
 }
