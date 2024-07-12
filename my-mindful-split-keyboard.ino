@@ -10,13 +10,21 @@ const byte INPUTS[INPUT_COUNT] = {
   0, 1, 2, 4, 5, SPECIAL_SECTION_LEFT, SPECIAL_SECTION_RIGHT
 };
 
-const char keys[INPUT_COUNT][OUTPUT_COUNT] = {
-  {'r', 'f'},
+const byte LAYERS = 2;
+
+const char keys[LAYERS][INPUT_COUNT][OUTPUT_COUNT] = {
+  {
+    {'r', 'f'},
+  },
+  {
+    {'t', 'g'},
+  },
 };
 
 
 bool keyDown[INPUT_COUNT][OUTPUT_COUNT];
 bool keyDownPrev[INPUT_COUNT][OUTPUT_COUNT];
+byte layer = 0;
 
 void setup() {
   for (byte i = 0; i < OUTPUT_COUNT; i++) {
@@ -47,6 +55,8 @@ void loop() {
     digitalWrite(OUTPUTS[i], HIGH);
   }
 
+  handleLayers();
+
   for (byte i = 0; i < OUTPUT_COUNT; i++) {
     for (byte j = 0; j < INPUT_COUNT; j++) {
       if (keyDown[j][i] && !keyDownPrev[j][i]) {
@@ -65,11 +75,7 @@ void handlePressOrRelease(byte section, byte row, bool press) {
     case SPECIAL_SECTION_LEFT:
       switch (row) {
         case 0:
-          if (press) {
-            Keyboard.press(KEY_LEFT_SHIFT);
-          } else {
-            Keyboard.release(KEY_LEFT_SHIFT);
-          }
+          por(KEY_LEFT_SHIFT, press);
           break;
 
       }
@@ -79,12 +85,25 @@ void handlePressOrRelease(byte section, byte row, bool press) {
       break;
 
     default:
-      if (press) {
-        Keyboard.press(keys[section][row]);
-      } else {
-        Keyboard.release(keys[section][row]);
-      }
+      por(keys[layer][section][row], press);
       break;
   }
+}
 
+void handleLayers() {
+  if (keyDown[SPECIAL_SECTION_LEFT][1]) {
+    layer = 1;
+    return;
+  }
+
+  layer = 0;
+}
+
+// Press or Release
+void por(char key, bool press) {
+  if (press) {
+    Keyboard.press(key);
+  } else {
+    Keyboard.release(key);
+  }
 }
