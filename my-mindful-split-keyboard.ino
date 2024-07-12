@@ -10,6 +10,12 @@ const byte INPUTS[INPUT_COUNT] = {
   0, 1, 2, 4, 5, SPECIAL_SECTION_LEFT, SPECIAL_SECTION_RIGHT
 };
 
+const char keys[INPUT_COUNT][OUTPUT_COUNT] = {
+  {'r', 'f'},
+  {KEY_RIGHT_SHIFT, '1'}
+};
+
+
 bool keyDown[INPUT_COUNT][OUTPUT_COUNT];
 bool keyDownPrev[INPUT_COUNT][OUTPUT_COUNT];
 
@@ -56,5 +62,9 @@ void loop() {
 }
 
 void handlePressOrRelease(byte section, byte row, bool press) {
-  // TODO
+  if (press) {
+    Keyboard.press(keys[section][row]);
+  } else {
+    Keyboard.release(keys[section][row]);
+  }
 }
