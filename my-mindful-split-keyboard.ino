@@ -12,7 +12,6 @@ const byte INPUTS[INPUT_COUNT] = {
 
 const char keys[INPUT_COUNT][OUTPUT_COUNT] = {
   {'r', 'f'},
-  {KEY_RIGHT_SHIFT, '1'}
 };
 
 
@@ -62,9 +61,30 @@ void loop() {
 }
 
 void handlePressOrRelease(byte section, byte row, bool press) {
-  if (press) {
-    Keyboard.press(keys[section][row]);
-  } else {
-    Keyboard.release(keys[section][row]);
+  switch (section) {
+    case SPECIAL_SECTION_LEFT:
+      switch (row) {
+        case 0:
+          if (press) {
+            Keyboard.press(KEY_LEFT_SHIFT);
+          } else {
+            Keyboard.release(KEY_LEFT_SHIFT);
+          }
+          break;
+
+      }
+      break;
+
+    case SPECIAL_SECTION_RIGHT:
+      break;
+
+    default:
+      if (press) {
+        Keyboard.press(keys[section][row]);
+      } else {
+        Keyboard.release(keys[section][row]);
+      }
+      break;
   }
+
 }
