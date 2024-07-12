@@ -10,6 +10,9 @@ const byte INPUTS[INPUT_COUNT] = {
   0, 1, 2, 4, 5, SPECIAL_SECTION_LEFT, SPECIAL_SECTION_RIGHT
 };
 
+bool keyDown[INPUT_COUNT][OUTPUT_COUNT];
+bool keyDownPrev[INPUT_COUNT][OUTPUT_COUNT];
+
 void setup() {
   for (byte i = 0; i < OUTPUT_COUNT; i++) {
     pinMode(OUTPUTS[i], OUTPUT);
@@ -24,4 +27,34 @@ void setup() {
 }
 
 void loop() {
+  for (byte i = 0; i < OUTPUT_COUNT; i++) {
+    for (byte j = 0; j < INPUT_COUNT; j++) {
+      keyDownPrev[j][i] = keyDown[j][i];
+    }
+  }
+
+  for (byte i = 0; i < OUTPUT_COUNT; i++) {
+    digitalWrite(OUTPUTS[i], LOW);
+    delayMicroseconds(5);
+    for (byte j = 0; j < INPUT_COUNT; j++) {
+      keyDown[j][i] = (digitalRead(INPUTS[j]) == LOW);
+    }
+    digitalWrite(OUTPUTS[i], HIGH);
+  }
+
+  for (byte i = 0; i < OUTPUT_COUNT; i++) {
+    for (byte j = 0; j < INPUT_COUNT; j++) {
+      if (keyDown[j][i] && !keyDownPrev[j][i]) {
+        handlePressOrRelease(j, i, true);
+      }
+
+      if (!keyDown[j][i] && keyDownPrev[j][i]) {
+        handlePressOrRelease(j, i, false);
+      }
+    }
+  }
+}
+
+void handlePressOrRelease(byte section, byte row, bool press) {
+  // TODO
 }
