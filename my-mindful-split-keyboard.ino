@@ -12,6 +12,8 @@ const byte INPUTS[INPUT_COUNT] = {
 
 const byte LAYERS = 2;
 
+const unsigned long LOCK_TIME_BOUND = 250;
+
 const char keys[LAYERS][INPUT_COUNT][OUTPUT_COUNT] = {
   {
     {'r', 'f'},
@@ -25,6 +27,9 @@ const char keys[LAYERS][INPUT_COUNT][OUTPUT_COUNT] = {
 bool keyDown[INPUT_COUNT][OUTPUT_COUNT];
 bool keyDownPrev[INPUT_COUNT][OUTPUT_COUNT];
 byte layer = 0;
+
+unsigned long shiftLastTime;
+bool shiftLock = false;
 
 void setup() {
   for (byte i = 0; i < OUTPUT_COUNT; i++) {
@@ -75,7 +80,17 @@ void handlePressOrRelease(byte section, byte row, bool press) {
     case SPECIAL_SECTION_LEFT:
       switch (row) {
         case 0:
-          por(KEY_LEFT_SHIFT, press);
+          if (press) {
+            Keyboard.press(KEY_RIGHT_SHIFT);
+
+            unsigned long shiftTime = millis();
+            if (shiftTime - shiftLastTime < LOCK_TIME_BOUND) {
+              shiftLock = !shiftLock;
+            }
+            shiftLastTime = shiftTime;
+          } else if (!shiftLock) {
+            Keyboard.release(KEY_RIGHT_SHIFT);
+          }
           break;
 
       }
