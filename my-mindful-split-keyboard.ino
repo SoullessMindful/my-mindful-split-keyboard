@@ -16,10 +16,32 @@ const unsigned long LOCK_TIME_BOUND = 250;
 
 const char keys[LAYERS][INPUT_COUNT][OUTPUT_COUNT] = {
   {
-    {'r', 'f'},
+    {KEY_TAB, KEY_ESC, KEY_CAPS_LOCK,
+    'q', 'a', 'z'},
+    {'w', 's', 'x',
+    'e', 'd', 'c'},
+    {'r', 'f', 'v',
+    't', 'g', 'b'},
+    {'y', 'h', 'n',
+    'u', 'j', 'm'},
+    {'i', 'k', ',',
+    'o', 'l', '.'},
+    {'p', ';', '/',
+    '\\', '\'', KEY_RIGHT_SHIFT},
   },
   {
-    {'t', 'g'},
+    {KEY_TAB, KEY_ESC, KEY_CAPS_LOCK,
+    KEY_F1, KEY_F13, KEY_INSERT},
+    {KEY_F2, KEY_F14, KEY_DELETE,
+    KEY_F3, KEY_F15, KEY_F18},
+    {KEY_F4, KEY_F16, KEY_F19,
+    KEY_F5, KEY_F17, KEY_F20},
+    {KEY_F6, KEY_LEFT_ARROW, KEY_HOME,
+    KEY_F7, KEY_DOWN_ARROW, KEY_PAGE_DOWN},
+    {KEY_F8, KEY_UP_ARROW, KEY_PAGE_UP,
+    KEY_F9, KEY_RIGHT_ARROW, KEY_END},
+    {KEY_F10, ';', '/',
+    KEY_F11, KEY_F12, KEY_PRINT_SCREEN},
   },
 };
 
