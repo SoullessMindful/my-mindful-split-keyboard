@@ -77,3 +77,14 @@ void KeyLayerWithLock::press() {
   }
   *lastTime = time;
 }
+
+// Key Macro
+KeyMacro::KeyMacro(string text) {
+  this->text = text;
+}
+
+void KeyMacro::press() {
+  Keyboard.print(text);
+}
+
+void KeyMacro::release() {}

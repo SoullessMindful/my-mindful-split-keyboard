@@ -54,4 +54,13 @@ class KeyLayerWithLock : public KeyLayer {
     unsigned long *lastTime;
 };
 
+class KeyMacro : public Key {
+  public:
+    KeyMacro(string text);
+    void press() override;
+    void release() override;
+  private:
+    string text;
+};
+
 #endif

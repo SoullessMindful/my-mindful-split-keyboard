@@ -8,7 +8,8 @@ const byte INPUTS[INPUT_COUNT] = {
   0, 1, 2, 4, 5, 6, 7
 };
 
-const byte LAYER_COUNT = 2;
+const byte LAYER_COUNT = 3;
+const byte SYMBOL_LAYER = 2;
 const byte FUNCTION_LAYER = 1;
 const byte BASE_LAYER = 0;
 
@@ -54,6 +55,12 @@ bool functionLayerLock = false;
 
 Key *functionLayerKey = new KeyLayerWithLock(&functionLayerOn, &functionLayerLock, &functionLayerLastTime);
 
+unsigned long symbolLayerLastTime;
+bool symbolLayerOn = false;
+bool symbolLayerLock = false;
+
+Key *symbolLayerKey = new KeyLayerWithLock(&symbolLayerOn, &symbolLayerLock, &symbolLayerLastTime);
+
 Key *keys[LAYER_COUNT][INPUT_COUNT][OUTPUT_COUNT] = {
   {
     {new Key(KEY_TAB), new Key(KEY_ESC), new Key(KEY_CAPS_LOCK),
@@ -68,7 +75,10 @@ Key *keys[LAYER_COUNT][INPUT_COUNT][OUTPUT_COUNT] = {
     new Key('o'), new Key('l'), new Key('.')},
     {new Key('p'), new Key(';'), new Key('/'),
     new Key('\\'), new Key('\''), new Key(KEY_RIGHT_SHIFT)},
-    {thumbShiftKey, functionLayerKey},
+    {new Key(KEY_BACKSPACE), new Key(' '), new Key(KEY_LEFT_ALT),
+    thumbShiftKey, new Key(KEY_LEFT_GUI), new Key(KEY_LEFT_CTRL)},
+    {new Key(KEY_RETURN), new Key(' '), new Key(KEY_LEFT_ALT),
+    thumbShiftKey, symbolLayerKey, functionLayerKey},
   },
   {
     {new Key(KEY_TAB), new Key(KEY_ESC), new Key(KEY_CAPS_LOCK),
@@ -83,13 +93,49 @@ Key *keys[LAYER_COUNT][INPUT_COUNT][OUTPUT_COUNT] = {
     new Key(KEY_F9), new Key(KEY_RIGHT_ARROW), new Key(KEY_END)},
     {new Key(KEY_F10), new KeyScroll(1), new KeyScroll(-1),
     new Key(KEY_F11), new Key(KEY_F12), new Key(KEY_PRINT_SCREEN)},
-    {thumbShiftKey, functionLayerKey},
+    {new Key(KEY_BACKSPACE), new Key(' '), new Key(KEY_LEFT_ALT),
+    thumbShiftKey, new Key(KEY_LEFT_GUI), new Key(KEY_LEFT_CTRL)},
+    {new Key(KEY_RETURN), new Key(' '), new Key(KEY_LEFT_ALT),
+    thumbShiftKey, symbolLayerKey, functionLayerKey},
+  },
+  {
+    {new Key('`'), new Key(KEY_ESC), new Key(KEY_CAPS_LOCK),
+    new Key('1'), new Key('<'), new Key('!')},
+    {new Key('2'), new Key('{'), new Key('@'),
+    new Key('3'), new Key('['), new Key('#')},
+    {new Key('4'), new Key('('), new Key('$'),
+    new Key('5'), new KeyMacro("=>"), new Key('%')},
+    {new Key('6'), new KeyMacro("->"), new Key('^'),
+    new Key('7'), new Key(')'), new Key('&')},
+    {new Key('8'), new Key(']'), new Key('*'),
+    new Key('9'), new Key('}'), new Key('(')},
+    {new Key('0'), new Key('>'), new Key(')'),
+    new Key('-'), new Key('='), new Key(KEY_RIGHT_SHIFT)},
+    {new Key(KEY_BACKSPACE), new Key(' '), new Key(KEY_LEFT_ALT),
+    thumbShiftKey, new Key(KEY_LEFT_GUI), new Key(KEY_LEFT_CTRL)},
+    {new Key(KEY_RETURN), new Key(' '), new Key(KEY_LEFT_ALT),
+    thumbShiftKey, symbolLayerKey, functionLayerKey},
   },
 };
 
 bool keyDown[INPUT_COUNT][OUTPUT_COUNT];
 bool keyDownPrev[INPUT_COUNT][OUTPUT_COUNT];
+
 byte layer = 0;
+
+void handleLayers() {
+  if (symbolLayerLock || symbolLayerOn) {
+    layer = SYMBOL_LAYER;
+    return;
+  }
+
+  if (functionLayerLock || functionLayerOn) {
+    layer = FUNCTION_LAYER;
+    return;
+  }
+
+  layer = BASE_LAYER;
+}
 
 void setup() {
   for (byte i = 0; i < OUTPUT_COUNT; i++) {
@@ -103,8 +149,6 @@ void setup() {
 
   Keyboard.begin();
   Mouse.begin();
-
-  delay(3000);
 }
 
 void loop() {
@@ -148,13 +192,4 @@ void handlePressOrRelease(byte section, byte row, bool press) {
   } else {
     currentKey->release();
   }
-}
-
-void handleLayers() {
-  if (functionLayerLock || functionLayerOn) {
-    layer = FUNCTION_LAYER;
-    return;
-  }
-
-  layer = BASE_LAYER;
 }
