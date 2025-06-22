@@ -79,7 +79,7 @@ void KeyLayerWithLock::press() {
 }
 
 // Key Macro
-KeyMacro::KeyMacro(string text) {
+KeyMacro::KeyMacro(String text) {
   this->text = text;
 }
 

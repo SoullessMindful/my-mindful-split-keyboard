@@ -56,11 +56,11 @@ class KeyLayerWithLock : public KeyLayer {
 
 class KeyMacro : public Key {
   public:
-    KeyMacro(string text);
+    KeyMacro(String text);
     void press() override;
     void release() override;
   private:
-    string text;
+    String text;
 };
 
 #endif
